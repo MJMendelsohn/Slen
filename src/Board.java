@@ -26,4 +26,17 @@ public final class Board {
       System.out.println();
     }
   }
+
+  public boolean isValidCell(int row,int col,int player) {
+    int val = board[row][col];
+    return val != 3 && val != player;
+  }
+
+  public boolean isValidRow(int row) {
+    return row >= 0 && row < board.length;
+  }
+
+  public boolean isValidCol(int col) {
+    return col >= 0 && col < board[0].length;
+  }
 }
