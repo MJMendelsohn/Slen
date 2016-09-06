@@ -22,12 +22,12 @@ public final class Board {
     System.out.print("   ");
     for(int i = 0; i < board[0].length; i++) {
       String label = (i < 10 ? " " + i : ""+i);
-      System.out.print(" " + label); 
+      System.out.print(" " + label);
     }
     System.out.println();
     System.out.print("   ");
     for(int i = 0; i < board[0].length; i++) {
-      System.out.print("---"); 
+      System.out.print("---");
     }
     System.out.println();
     for(int i = 0; i < board.length; i++) {
