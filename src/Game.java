@@ -12,18 +12,44 @@ public final class Game {
   public void runGame() {
     gameBoard.printBoard();
     while(true) {
-      System.out.println("Player 1's Move: ");
-      System.out.print("Enter Row: ");
-      int rowP1 = scanner.nextInt();
-      System.out.print("Enter Column: ");
-      int colP1 = scanner.nextInt();
-      System.out.println("Player 2's Move: ");
-      System.out.print("Enter Row: ");
-      int rowP2 = scanner.nextInt();
-      System.out.print("Enter Column: ");
-      int colP2 = scanner.nextInt();
-      gameBoard.executeTurn(rowP1, colP1, rowP2, colP2);
+      int[] p1 = getInput(1);
+      int[] p2 = getInput(2);
+      gameBoard.executeTurn(p1[0], p1[1], p2[0], p2[1]);
       gameBoard.printBoard();
     }
+  }
+
+  private int[] getInput(int player) {
+    System.out.println("Player " + player + "'s Move: ");
+    int row = getRowInput();
+    int col = getColInput();
+    if (!gameBoard.isValidCell(row, col, player)) {
+      System.out.println("Invalid cell!");
+      return getInput(player);
+    }
+    int[] pair = new int[2];
+    pair[0] = row;
+    pair[1] = col;
+    return pair;
+  }
+
+  private int getRowInput() {
+    System.out.print("Enter Row: ");
+    int row = scanner.nextInt();
+    if (!gameBoard.isValidRow(row)) {
+      System.out.println("Invalid row input!");
+      return getRowInput();
+    }
+    return row;
+  }
+
+  private int getColInput() {
+    System.out.print("Enter Col: ");
+    int col = scanner.nextInt();
+    if (!gameBoard.isValidCol(col)) {
+      System.out.println("Invalid column input!");
+      return getColInput();
+    }
+    return col;
   }
 }
