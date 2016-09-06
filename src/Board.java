@@ -19,9 +19,22 @@ public final class Board {
   }
 
   public void printBoard() {
+    System.out.print("   ");
+    for(int i = 0; i < board[0].length; i++) {
+      String label = (i < 10 ? " " + i : ""+i);
+      System.out.print(" " + label); 
+    }
+    System.out.println();
+    System.out.print("   ");
+    for(int i = 0; i < board[0].length; i++) {
+      System.out.print("---"); 
+    }
+    System.out.println();
     for(int i = 0; i < board.length; i++) {
+      String label = (i < 10 ? " " + i : ""+i);
+      System.out.print(label + " | ");
       for(int j = 0; j < board[i].length; j++) {
-        System.out.print(board[i][j] + " ");
+        System.out.print(board[i][j] + "  ");
       }
       System.out.println();
     }
