@@ -12,25 +12,23 @@ public final class Game {
   public void runGame() {
     gameBoard.printBoard();
     while(true) {
-      int[] p1 = getInput(1);
-      int[] p2 = getInput(2);
-      gameBoard.executeTurn(p1[0], p1[1], p2[0], p2[1]);
+      Pair p1 = getInput(1);
+      Pair p2 = getInput(2);
+      gameBoard.executeTurn(p1, p2);
       gameBoard.printBoard();
     }
   }
 
-  private int[] getInput(int player) {
+  private Pair getInput(int player) {
     System.out.println("Player " + player + "'s Move: ");
     int row = getRowInput();
     int col = getColInput();
-    if (!gameBoard.isValidCell(row, col, player)) {
+    Pair move = new Pair(row, col);
+    if (!gameBoard.isValidCell(move, player)) {
       System.out.println("Invalid cell!");
       return getInput(player);
     }
-    int[] pair = new int[2];
-    pair[0] = row;
-    pair[1] = col;
-    return pair;
+    return move;
   }
 
   private int getRowInput() {
