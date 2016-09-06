@@ -7,8 +7,8 @@ public final class Board {
   public Board(int width, int height) {
     // num columns = width, num rows = height
     this.board = new State[width][height];
-    for(State[] row : board) {
-      Arrays.fill(row, State.NEITHER);
+    for(State[] column : board) {
+      Arrays.fill(column, State.NEITHER);
     }
   }
 
@@ -62,21 +62,21 @@ public final class Board {
 
   public void printBoard() {
     System.out.print("   ");
-    for(int i = 0; i < board[0].length; i++) {
+    for(int i = 0; i < board.length; i++) {
       String label = (i < 10 ? " " + i : "" + i);
       System.out.print(" " + label);
     }
     System.out.println();
     System.out.print("   ");
-    for(int i = 0; i < board[0].length; i++) {
+    for(int i = 0; i < board.length; i++) {
       System.out.print("---");
     }
     System.out.println();
-    for(int i = 0; i < board.length; i++) {
-      String label = (i < 10 ? " " + i : "" + i);
+    for(int y = 0; y < board[0].length; y++) {
+      String label = (y < 10 ? " " + y : "" + y);
       System.out.print(label + " | ");
-      for(int j = 0; j < board[i].length; j++) {
-        System.out.print(getDisplayValue(i, j) + "  ");
+      for(int x = 0; x < board[0].length; x++) {
+        System.out.print(getDisplayValue(x, y) + "  ");
       }
       System.out.println();
     }

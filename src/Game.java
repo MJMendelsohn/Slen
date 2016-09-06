@@ -21,13 +21,13 @@ public final class Game {
 
   private Pair getInput(State player) {
     System.out.println("Player " + player + "'s Move: ");
-    int row = getRowInput();
-    int col = getColInput();
-    if (!gameBoard.isValidCell(new Pair(row, col), player)) {
+    int y = getRowInput();
+    int x = getColInput();
+    if (!gameBoard.isValidCell(new Pair(x, y), player)) {
       System.out.println("Invalid cell!");
       return getInput(player);
     }
-    return new Pair(row, col);
+    return new Pair(x, y);
   }
 
   private int getRowInput() {
