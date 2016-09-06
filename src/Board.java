@@ -10,12 +10,16 @@ public final class Board {
   }
   
   public void executeTurn(int rowP1, int colP1, int rowP2, int colP2) {
+    // the initial placement phase may be calculated sequentially
     if (rowP1 == rowP2 && colP1 == colP2) {
-        setCell(rowP1, colP1, 3);
-      } else {
-        setCell(rowP1, colP1, 1);
-        setCell(rowP2, colP2, 2);
-      }  
+      setCell(rowP1, colP1, 3);
+    } else {
+      setCell(rowP1, colP1, 1);
+      setCell(rowP2, colP2, 2);
+    }
+
+    // capturing logic requires simultaneity
+    // calculate all vertical and horizontal segments and compare endpoints to see if rectangles form
   }
 
   public void printBoard() {
