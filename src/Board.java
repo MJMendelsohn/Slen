@@ -5,17 +5,17 @@ public final class Board {
     this.board = new int[rows][cols];
   }
 
-  public void setCell(int row, int col, int val) {
-    board[row][col] = val;
+  public int setCell(int row, int col, int val) {
+    if (!(val == 1 || val == 2) || !isValidCell(row, col, val)) {
+      throw new RuntimeException("Tried to set invalid cell");
+    } 
+    board[row][col] += val;
+    return board[row][col];
   }
   
   public void executeTurn(int rowP1, int colP1, int rowP2, int colP2) {
-    if (rowP1 == rowP2 && colP1 == colP2) {
-        setCell(rowP1, colP1, 3);
-      } else {
-        setCell(rowP1, colP1, 1);
-        setCell(rowP2, colP2, 2);
-      }  
+    setCell(rowP1, colP1, 1);
+    setCell(rowP2, colP2, 2);
   }
 
   public void printBoard() {
@@ -27,9 +27,9 @@ public final class Board {
     }
   }
 
-  public boolean isValidCell(int row,int col,int player) {
-    int val = board[row][col];
-    return val != 3 && val != player;
+  public boolean isValidCell(int row, int col, int val) {
+    int currVal = board[row][col];
+    return currVal != 3 && currVal != val;
   }
 
   public boolean isValidRow(int row) {
