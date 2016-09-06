@@ -5,22 +5,21 @@ public final class Board {
     this.board = new int[rows][cols];
   }
 
-  public void setCell(Pair pair, int val) {
-    board[pair.getX()][pair.getY()] = val;
+  public int setCell(Pair loc, int val) {
+    if (!(val == 1 || val == 2) || !isValidCell(loc, val)) {
+      throw new RuntimeException("Tried to set invalid cell");
+    }
+    board[loc.getX()][loc.getY()] += val;
+    return board[loc.getX()][loc.getY()];
   }
   
   public void executeTurn(Pair p1, Pair p2) {
     // the initial placement phase may be calculated sequentially
-    if (p1.getX() == p1.getY() && p2.getX() == p2.getY()) {
-      setCell(p1, 3);
-    } else {
-      setCell(p1, 1);
-      setCell(p2, 2);
-    }
+    setCell(p1, 1);
+    setCell(p2, 2);
 
     // capturing logic requires simultaneity
     // calculate all vertical and horizontal segments and compare endpoints to see if rectangles form
-
   }
 
   public void printBoard() {

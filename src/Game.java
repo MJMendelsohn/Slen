@@ -23,11 +23,12 @@ public final class Game {
     System.out.println("Player " + player + "'s Move: ");
     int row = getRowInput();
     int col = getColInput();
-    if (!gameBoard.isValidCell(row, col, player)) {
+    Pair move = new Pair(row, col);
+    if (!gameBoard.isValidCell(move, player)) {
       System.out.println("Invalid cell!");
       return getInput(player);
     }
-    return new Pair(row, col);
+    return move;
   }
 
   private int getRowInput() {
