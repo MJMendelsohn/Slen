@@ -22,13 +22,7 @@ public final class Game {
       int rowP2 = scanner.nextInt();
       System.out.print("Enter Column: ");
       int colP2 = scanner.nextInt();
-      if (rowP1 == rowP2 && colP1 == colP2) {
-        gameBoard.setCell(rowP1, colP1, 3);
-      } else {
-        gameBoard.setCell(rowP1, colP1, 1);
-        gameBoard.setCell(rowP2, colP2, 2);
-      }
-
+      gameBoard.executeTurn(rowP1, colP1, rowP2, colP2);
       gameBoard.printBoard();
     }
   }

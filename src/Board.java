@@ -8,6 +8,15 @@ public final class Board {
   public void setCell(int row, int col, int val) {
     board[row][col] = val;
   }
+  
+  public void executeTurn(int rowP1, int colP1, int rowP2, int colP2) {
+    if (rowP1 == rowP2 && colP1 == colP2) {
+        setCell(rowP1, colP1, 3);
+      } else {
+        setCell(rowP1, colP1, 1);
+        setCell(rowP2, colP2, 2);
+      }  
+  }
 
   public void printBoard() {
     for(int i = 0; i < board.length; i++) {
