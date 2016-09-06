@@ -1,31 +1,69 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public final class Board {
-  private int[][] board;
+  private State[][] board;
   
-  public Board(int rows, int cols) {
-    this.board = new int[rows][cols];
+  public Board(int width, int height) {
+    // num columns = width, num rows = height
+    this.board = new State[width][height];
+    for(State[] row : board) {
+      Arrays.fill(row, State.NEITHER);
+    }
   }
 
-  public int setCell(Pair loc, int val) {
-    if (!(val == 1 || val == 2) || !isValidCell(loc, val)) {
+  public State setCell(Pair loc, State val) {
+    if (!(val == State.BLACK || val == State.WHITE) || !isValidCell(loc, val)) {
       throw new RuntimeException("Tried to set invalid cell");
     }
-    board[loc.getX()][loc.getY()] += val;
+    if(board[loc.getX()][loc.getY()] != State.NEITHER) {
+      board[loc.getX()][loc.getY()] = State.BOTH;
+    } else {
+      board[loc.getX()][loc.getY()] = val;
+    }
     return board[loc.getX()][loc.getY()];
   }
   
   public void executeTurn(Pair p1, Pair p2) {
     // the initial placement phase may be calculated sequentially
-    setCell(p1, 1);
-    setCell(p2, 2);
+    setCell(p1, State.BLACK);
+    setCell(p2, State.WHITE);
 
     // capturing logic requires simultaneity
     // calculate all vertical and horizontal segments and compare endpoints to see if rectangles form
+    ArrayList<Pair> vertBlackPairs = new ArrayList<Pair>();
+    ArrayList<Pair> horizBlackPairs = new ArrayList<Pair>();
+    ArrayList<Pair> vertWhitePairs = new ArrayList<Pair>();
+    ArrayList<Pair> horizWhitePairs = new ArrayList<Pair>();
+  }
+
+  /**
+   * A method to find the pairs for both players in a given direction. This method could be replaced with a less
+   * intuitive but more efficient method which would only need to be called once and which would find vertical and
+   * horizontal pairs simultaneously, but this should be good enough for now.
+   * @param isVert Whether or not the method should find vertical pairs. If the method does not seek vertical pairs it
+   *               will find horizontal ones.
+   * @return An array containing two ArrayLists of Pairs, the first for black and the second for white.
+   */
+  private ArrayList<Pair>[] getPairsInDirection(boolean isVert) {
+    int innerBound = isVert ? board.length : board[0].length;
+    int outerBound = isVert ? board[0].length : board.length;
+    for (int i = 0; i < innerBound; i++) {
+      ArrayList<Integer> blackPiecesFound = new ArrayList<Integer>();
+      ArrayList<Integer> whitePiecesFound = new ArrayList<Integer>();
+      for (int j = 0; i < outerBound; j++) {
+//        if(board[i][j] == 1) {
+//
+//        }
+      }
+    }
+    return null;
   }
 
   public void printBoard() {
     System.out.print("   ");
     for(int i = 0; i < board[0].length; i++) {
-      String label = (i < 10 ? " " + i : ""+i);
+      String label = (i < 10 ? " " + i : "" + i);
       System.out.print(" " + label);
     }
     System.out.println();
@@ -35,18 +73,38 @@ public final class Board {
     }
     System.out.println();
     for(int i = 0; i < board.length; i++) {
-      String label = (i < 10 ? " " + i : ""+i);
+      String label = (i < 10 ? " " + i : "" + i);
       System.out.print(label + " | ");
       for(int j = 0; j < board[i].length; j++) {
-        System.out.print(board[i][j] + "  ");
+        System.out.print(getDisplayValue(i, j) + "  ");
       }
       System.out.println();
     }
   }
 
-  public boolean isValidCell(Pair loc ,int player) {
-    int val = board[loc.getX()][loc.getY()];
-    return val != 3 && val != player;
+  public boolean isValidCell(Pair loc , State player) {
+    State val = board[loc.getX()][loc.getY()];
+    return val != State.BOTH && val != player;
+  }
+
+  /**
+   * A method to abstract away the choice of what to display for a given cell state.
+   * @param x
+   * @param y
+   * @return The display value of the given board cell.
+   */
+  public char getDisplayValue(int x, int y) {
+    switch(board[x][y]) {
+      case NEITHER:
+        return '.';
+      case BLACK:
+        return 'B';
+      case WHITE:
+        return 'W';
+      case BOTH:
+        return 'X';
+    }
+    return '?';
   }
 
   public boolean isValidRow(int row) {

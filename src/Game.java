@@ -12,14 +12,14 @@ public final class Game {
   public void runGame() {
     gameBoard.printBoard();
     while(true) {
-      Pair p1 = getInput(1);
-      Pair p2 = getInput(2);
+      Pair p1 = getInput(State.BLACK);
+      Pair p2 = getInput(State.WHITE);
       gameBoard.executeTurn(p1, p2);
       gameBoard.printBoard();
     }
   }
 
-  private Pair getInput(int player) {
+  private Pair getInput(State player) {
     System.out.println("Player " + player + "'s Move: ");
     int row = getRowInput();
     int col = getColInput();
