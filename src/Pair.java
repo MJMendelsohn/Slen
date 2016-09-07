@@ -16,4 +16,13 @@ public class Pair {
     public int getY() {
         return y;
     }
+
+    public boolean equals(Object o) {
+        if (!(o instanceof Pair)) {
+            return false;
+        } else {
+            Pair p = (Pair) o;
+            return (x == p.getX()) && (y == p.getY());
+        }
+    }
 }

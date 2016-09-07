@@ -1,5 +1,4 @@
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 public final class Board {
   private State[][] board;
@@ -23,41 +22,121 @@ public final class Board {
     }
     return board[loc.getX()][loc.getY()];
   }
-  
+
+  // TODO re-apply capture logic to account for cascading captures
   public void executeTurn(Pair p1, Pair p2) {
     // the initial placement phase may be calculated sequentially
     setCell(p1, State.BLACK);
     setCell(p2, State.WHITE);
 
-    // capturing logic requires simultaneity
-    // calculate all vertical and horizontal segments and compare endpoints to see if rectangles form
-    ArrayList<Pair> vertBlackPairs = new ArrayList<Pair>();
-    ArrayList<Pair> horizBlackPairs = new ArrayList<Pair>();
-    ArrayList<Pair> vertWhitePairs = new ArrayList<Pair>();
-    ArrayList<Pair> horizWhitePairs = new ArrayList<Pair>();
-  }
+    // capturing logic requires simultaneity, so we process column by column
+    /**
+     * Maps for each color from a given interval to the column it appears in. Will only ever need one entry since if a
+     * second pair is found, scoring would occur which will reset the map entry with the new segment.
+     */
+    Map<Pair, Integer> blackSegmentColumns = new HashMap<Pair, Integer>();
+    Map<Pair, Integer> whiteSegmentColumns = new HashMap<Pair, Integer>();
+    /**
+     * Sets for each color containing the vertical segments of the currently examined column, where the pairs represent
+     * interval endpoints.
+     */
+    Set<Pair> currentBlackSegments = new HashSet<Pair>();
+    Set<Pair> currentWhiteSegments = new HashSet<Pair>();
+    /**
+     * Sets for each color containing the points found so far in the currently examined column
+     */
+    Set<Integer> currentBlackPoints = new HashSet<Integer>();
+    Set<Integer> currentWhitePoints = new HashSet<Integer>();
 
-  /**
-   * A method to find the pairs for both players in a given direction. This method could be replaced with a less
-   * intuitive but more efficient method which would only need to be called once and which would find vertical and
-   * horizontal pairs simultaneously, but this should be good enough for now.
-   * @param isVert Whether or not the method should find vertical pairs. If the method does not seek vertical pairs it
-   *               will find horizontal ones.
-   * @return An array containing two ArrayLists of Pairs, the first for black and the second for white.
-   */
-  private ArrayList<Pair>[] getPairsInDirection(boolean isVert) {
-    int innerBound = isVert ? board.length : board[0].length;
-    int outerBound = isVert ? board[0].length : board.length;
-    for (int i = 0; i < innerBound; i++) {
-      ArrayList<Integer> blackPiecesFound = new ArrayList<Integer>();
-      ArrayList<Integer> whitePiecesFound = new ArrayList<Integer>();
-      for (int j = 0; i < outerBound; j++) {
-//        if(board[i][j] == 1) {
-//
-//        }
+    HashSet<Pair> toRemove = new HashSet<Pair>(); // placeholder set to prevent a ConcurrentModificationException
+    for(int x = 0; x < board.length; x++) {
+
+      // Populates the current segments sets.
+      // TODO account for vertical blocking
+      currentBlackSegments.clear();
+      currentWhiteSegments.clear();
+      currentBlackPoints.clear();
+      currentWhitePoints.clear();
+      for(int y = 0; y < board[0].length; y++) {
+        // first add any new segments that use the new point to account for shared vertices
+        if (board[x][y] == State.BLACK || board[x][y] == State.BOTH) {
+          for(Integer i : currentBlackPoints) {
+            currentBlackSegments.add(new Pair(i, y));
+          }
+        }
+        if (board[x][y] == State.WHITE || board[x][y] == State.BOTH) {
+          for(Integer i : currentWhitePoints) {
+            currentBlackSegments.add(new Pair(i, y));
+          }
+        }
+        // then remove previous points which are blocked by the new point of an opposing color
+        if (board[x][y] == State.BLACK || board[x][y] == State.BOTH) {
+          currentWhitePoints.clear();
+        }
+        if (board[x][y] == State.WHITE || board[x][y] == State.BOTH) {
+          currentBlackPoints.clear();
+        }
+        // finally, add the new points no matter what since they can't have been blocked yet
+        if (board[x][y] == State.BLACK || board[x][y] == State.BOTH) {
+          currentBlackPoints.add(y);
+        }
+        if (board[x][y] == State.WHITE || board[x][y] == State.BOTH) {
+          currentWhitePoints.add(y);
+        }
+      }
+
+      // Searches for parallel pairs in pair map and scores accordingly.
+      for(Pair p : currentBlackSegments) {
+        if(blackSegmentColumns.containsKey(p)) {
+          for(int i = blackSegmentColumns.get(p); i < x; i++){
+            for(int j = p.getX(); j < p.getY(); j++){
+              setCell(new Pair(i, j), State.BLACK);
+            }
+          }
+        }
+      }
+      for(Pair p : currentWhiteSegments) {
+        if(whiteSegmentColumns.containsKey(p)) {
+          for(int i = whiteSegmentColumns.get(p); i < x; i++){
+            for(int j = p.getX(); j < p.getY(); j++){
+              setCell(new Pair(i, j), State.WHITE);
+            }
+          }
+        }
+      }
+
+      // Removes any pairs blocked by things in the current row.
+      for(int i : currentBlackPoints) {
+        for(Pair p : whiteSegmentColumns.keySet()) {
+          if(p.getX() == i || p.getY() == i) {
+            toRemove.add(p);
+          }
+        }
+      }
+      for(Pair p : toRemove) {
+        whiteSegmentColumns.remove(p);
+      }
+      toRemove.clear();
+      for(int i : currentWhitePoints) {
+        for(Pair p : blackSegmentColumns.keySet()) {
+          if(p.getX() == i || p.getY() == i) {
+            toRemove.add(p);
+          }
+        }
+      }
+      for(Pair p : toRemove) {
+        blackSegmentColumns.remove(p);
+      }
+      toRemove.clear();
+
+      // Adds newly found segments to the columns maps.
+      for(Pair p : currentBlackSegments) {
+        blackSegmentColumns.put(p, x);
+      }
+      for(Pair p : currentWhiteSegments) {
+        whiteSegmentColumns.put(p, x);
       }
     }
-    return null;
   }
 
   public void printBoard() {
@@ -75,7 +154,7 @@ public final class Board {
     for(int y = 0; y < board[0].length; y++) {
       String label = (y < 10 ? " " + y : "" + y);
       System.out.print(label + " | ");
-      for(int x = 0; x < board[0].length; x++) {
+      for(int x = 0; x < board.length; x++) {
         System.out.print(getDisplayValue(x, y) + "  ");
       }
       System.out.println();
