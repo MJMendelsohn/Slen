@@ -25,4 +25,8 @@ public class Pair {
             return (x == p.getX()) && (y == p.getY());
         }
     }
+
+    public int hashCode() {
+        return x * 31 + y;
+    }
 }

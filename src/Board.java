@@ -28,8 +28,16 @@ public final class Board {
     // the initial placement phase may be calculated sequentially
     setCell(p1, State.BLACK);
     setCell(p2, State.WHITE);
+    while(!iterateCaptures()) {}
+  }
 
+  /**
+   * Applies one recursive iteration of captures. Returns false if no captures were made, and thus that no further
+   * capture checks need be made.
+   */
+  public boolean iterateCaptures(){
     // capturing logic requires simultaneity, so we process column by column
+    boolean noMoreCaptures = true;
     /**
      * Maps for each color from a given interval to the column it appears in. Will only ever need one entry since if a
      * second pair is found, scoring would occur which will reset the map entry with the new segment.
@@ -50,9 +58,7 @@ public final class Board {
 
     HashSet<Pair> toRemove = new HashSet<Pair>(); // placeholder set to prevent a ConcurrentModificationException
     for(int x = 0; x < board.length; x++) {
-
       // Populates the current segments sets.
-      // TODO account for vertical blocking
       currentBlackSegments.clear();
       currentWhiteSegments.clear();
       currentBlackPoints.clear();
@@ -66,7 +72,7 @@ public final class Board {
         }
         if (board[x][y] == State.WHITE || board[x][y] == State.BOTH) {
           for(Integer i : currentWhitePoints) {
-            currentBlackSegments.add(new Pair(i, y));
+            currentWhiteSegments.add(new Pair(i, y));
           }
         }
         // then remove previous points which are blocked by the new point of an opposing color
@@ -87,19 +93,25 @@ public final class Board {
 
       // Searches for parallel pairs in pair map and scores accordingly.
       for(Pair p : currentBlackSegments) {
-        if(blackSegmentColumns.containsKey(p)) {
-          for(int i = blackSegmentColumns.get(p); i < x; i++){
-            for(int j = p.getX(); j < p.getY(); j++){
-              setCell(new Pair(i, j), State.BLACK);
+        if(blackSegmentColumns.containsKey(p) && x - blackSegmentColumns.get(p) > 1) { // quick fix until we have cap states
+          noMoreCaptures = false;
+          for(int i = blackSegmentColumns.get(p); i <= x; i++){
+            for(int j = p.getX(); j <= p.getY(); j++){
+              if(isValidCell(new Pair(i, j), State.BLACK)){
+                setCell(new Pair(i, j), State.BLACK);
+              }
             }
           }
         }
       }
       for(Pair p : currentWhiteSegments) {
-        if(whiteSegmentColumns.containsKey(p)) {
-          for(int i = whiteSegmentColumns.get(p); i < x; i++){
-            for(int j = p.getX(); j < p.getY(); j++){
-              setCell(new Pair(i, j), State.WHITE);
+        if(whiteSegmentColumns.containsKey(p) && x - whiteSegmentColumns.get(p) > 1) { // quick fix until we have cap states
+          noMoreCaptures = false;
+          for(int i = whiteSegmentColumns.get(p); i <= x; i++){
+            for(int j = p.getX(); j <= p.getY(); j++){
+              if(isValidCell(new Pair(i, j), State.WHITE)){
+                setCell(new Pair(i, j), State.WHITE);
+              }
             }
           }
         }
@@ -137,6 +149,7 @@ public final class Board {
         whiteSegmentColumns.put(p, x);
       }
     }
+    return noMoreCaptures;
   }
 
   public void printBoard() {
