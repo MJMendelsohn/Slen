@@ -13,7 +13,9 @@ public final class Game {
     gameBoard.printBoard();
     while(true) {
       Pair p1 = getInput(State.BLACK);
+      System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
       Pair p2 = getInput(State.WHITE);
+      System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
       gameBoard.executeTurn(p1, p2);
       gameBoard.printBoard();
     }
