@@ -1,1 +1,1 @@
-var grid = new Grid();
+var data = new GameData();
