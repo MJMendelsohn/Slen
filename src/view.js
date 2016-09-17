@@ -10,15 +10,5 @@ function View(gameData) {
 }
 
 View.prototype.display = function() {
-    var data = {
-        title: "Constructing HTML Elements"
-    }
-    var template = [
-        '<div class="tutorial">',
-            '<h1 class="tutorial-heading">{{title}}<h1>',
-        '</div>'
-    ].join("\n");
 
-    var html = Mustache.render(template, data);
-    $("body").append(html);
 };
