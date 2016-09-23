@@ -33,8 +33,8 @@ GameState.BoardState = React.createClass({
             rows[i] = React.createElement.apply(this,
                 ['tr', null].concat(cells), {key: i});
         }
-        return React.createElement('table', {cellSpacing:0,
-            style: {borderCollapse: 'collapse'}}, React.createElement.apply(
+        return React.createElement('table',
+            {style: {borderCollapse: 'collapse'}}, React.createElement.apply(
             this, ['tbody', null].concat(rows)));
     }
 });
