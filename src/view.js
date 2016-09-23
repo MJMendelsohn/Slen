@@ -33,7 +33,8 @@ GameState.BoardState = React.createClass({
             rows[i] = React.createElement.apply(this,
                 ['tr', null].concat(cells), {key: i});
         }
-        return React.createElement('table', null, React.createElement.apply(
+        return React.createElement('table', {cellSpacing:0,
+            style: {borderCollapse: 'collapse'}}, React.createElement.apply(
             this, ['tbody', null].concat(rows)));
     }
 });
@@ -41,11 +42,22 @@ GameState.BoardState = React.createClass({
 GameState.BoardState.BoardCell = React.createClass({
     displayName: "BoardCell",
 
+    getInitialState: function getInitialState() {
+        return {value: 'B'}
+    },
+    
+    handleClick() {
+        if (this.state.value == 'B') {
+            this.setState({value: 'W'});
+        } else {
+            this.setState({value: 'B'});
+        }
+    },
+
     render: function render() {
         return React.createElement(
-            "td",
-            null,
-            "X"
-        )
+            'td',
+            {onClick: this.handleClick, style: {border: '1px solid #000000', textAlign:'center', padding: '0px', width:20, height:20}},
+            this.state.value)
     }
 });
