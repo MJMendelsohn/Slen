@@ -1,11 +1,6 @@
-
-function View(gameData) {
-    this.gameData = gameData;
-    this.board = this.gameData.board;
-
-    this.rootElement = React.createElement('div', null);
+function View() {
     ReactDOM.render(React.createElement(GameState, null),
-    document.getElementById('react-container'));
+        document.getElementById('react-container'));
 }
 
 GameState = React.createClass({
@@ -23,35 +18,32 @@ GameState = React.createClass({
 GameState.BoardState = React.createClass({
     displayName: "Board",
 
+    getInitialState: function getInitialState() {
+        return {size: GameParameters.size}
+    },
+
     render: function render() {
-        var cols = [];
-        for (var i = 0; i < GameData.gameParameters.size; i++) {
-            cols[i] = React.createElement(GameState.BoardState.BoardColumn,
-            {key: i});
+        var rows = [];
+        for (var i = 0; i < this.state.size; i++) {
+            var cells = [];
+            for (var j = 0; j < this.state.size; j++) {
+                cells[j] = React.createElement(GameState.BoardState.BoardCell,
+                {key: j});
+            }
+            rows[i] = React.createElement.apply(this,
+                ['tr', null].concat(cells), {key: i});
         }
-        return React.createElement.apply(this, ['div', null].concat(cols));
+        return React.createElement('table', null, React.createElement.apply(
+            this, ['tbody', null].concat(rows)));
     }
 });
 
-GameState.BoardState.BoardColumn = React.createClass({
-    displayName: "BoardColumn",
-
-    render: function render() {
-        var cells = [];
-        for (var i = 0; i < GameData.gameParameters.size; i++) {
-            cells[i] = React.createElement(GameState.BoardState.BoardColumn.BoardCell,
-            {key: i});
-        }
-        return React.createElement.apply(this, ['div', null].concat(cells));
-    }
-});
-
-GameState.BoardState.BoardColumn.BoardCell = React.createClass({
+GameState.BoardState.BoardCell = React.createClass({
     displayName: "BoardCell",
 
     render: function render() {
         return React.createElement(
-            "div",
+            "td",
             null,
             "X"
         )
