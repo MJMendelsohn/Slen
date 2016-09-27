@@ -6,16 +6,13 @@
  * @param gameParameters The GameParameters object used to construct the game.
  */
 function GameData(gameParameters) {
-    /**
-     * The object for constructors within GameData's namespace to reference to
-     * know the parameters for the game being constructed. This has the
-     * consequence of preventing the creation of multiple GameDatas
-     * simultaneously.
-     */
-    GameData.gameParameters = gameParameters;
     this.board = new GameData.BoardData()
     this.metaData = new GameData.MetaData();
 }
+
+GameData.prototype.getBoardData = function() {
+    return this.board;
+};
 
 /**
  * @private
@@ -32,14 +29,25 @@ GameData.MetaData = function() {
  * @param size The integer size of the board.
  */
 GameData.BoardData = function() {
-    this.xIndices = new Array(GameData.gameParameters.size);
-    for (var x = 0; x < GameData.gameParameters.size; x++) {
-        this.xIndices[x] = new Array(GameData.gameParameters.size);
+    this.rows = new Array(GameParameters.size);
+    for (var y = 0; y < GameParameters.size; y++) {
+        this.rows[y] = new Array(GameParameters.size);
+        for(var x = 0; x < GameParameters.size; x++) {
+            this.rows[y][x] = new GameData.BoardData.LocationData();
+        }
     }
 }
 
-GameData.BoardData.prototype.getLocationDataXY = function(x, y) {
-    return this.xIndices[x][y];
+GameData.BoardData.prototype.getRow = function(y) {
+    return this.rows[y];
+};
+
+GameData.BoardData.prototype.getLocationData = function(x, y) {
+    return this.rows[y][x];
+};
+
+GameData.BoardData.prototype.getSize = function() {
+    return this.rows.length;
 };
 
 /**
@@ -47,33 +55,24 @@ GameData.BoardData.prototype.getLocationDataXY = function(x, y) {
  * on a given location on the game board.
  */
 GameData.BoardData.LocationData = function() {
-    this.pieces = [];
-    this.territoryMarks = [];
+    this.hasBlackPiece = false;
+    this.hasWhitePiece = false;
+    this.hasBlackMark = false;
+    this.hasWhiteMark = false;
 }
 
-GameData.BoardData.LocationData.prototype.addPiece = function(x, y, color) {
-    this.pieces.addPiece(new GameData.BoardData.LocationData.PieceData(color));
-    return this.xIndices[x][y];
+GameData.BoardData.LocationData.prototype.addPiece = function(color) {
+    if (color == State.BLACK) {
+        this.hasBlackPiece = true;
+    } else {
+        this.hasWhitePiece = true;
+    }
 };
 
-GameData.BoardData.LocationData.prototype.addTerritoryMark = function(x, y) {
-    this.pieces.addPiece(new GameData.BoardData.LocationData.TerritoryMark(
-        color));
-    return this.xIndices[x][y];
+GameData.BoardData.LocationData.prototype.addTerritoryMark = function(color) {
+    if (color == State.BLACK) {
+        this.hasBlackMark = true;
+    } else {
+        this.hasWhiteMark = true;
+    }
 };
-
-/**
- * An object representing a Piece of a given color on the game board.
- * @param color The color of the placed Piece.
- */
-GameData.BoardData.LocationData.PieceData = function(color) {
-    this.color = color;
-}
-
-/**
- * An object representing a TerritoryMark of a given color on the game board.
- * @param color The color of the placed TerritoryMark.
- */
-GameData.BoardData.LocationData.TerritoryMarkData = function(color) {
-    this.color = color;
-}
