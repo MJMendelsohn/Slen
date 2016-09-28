@@ -22,16 +22,22 @@ Model.prototype.init = function(viewCallback) {
  */
 Model.prototype.update = function(command) {
     if(command.id == 'place') {
-        this.place(command.contents.x, command.contents.y, this.currentColor);
-        if (this.currentColor == State.BLACK) {
-            this.currentColor = State.WHITE;
-        } else {
-            this.currentColor = State.BLACK;
+        if (this.place(command.contents.x, command.contents.y, this.currentColor)) {
+            if (this.currentColor == State.BLACK) {
+                this.currentColor = State.WHITE;
+            } else {
+                this.currentColor = State.BLACK;
+            }
         }
     }
     this.viewCallback.apply(this, [this.gameData]);
 };
 
 Model.prototype.place = function(x, y, value) {
+    if(this.gameData.getBoardData().getLocationData(x, y).hasWhitePiece && value == State.WHITE ||
+        this.gameData.getBoardData().getLocationData(x, y).hasBlackPiece && value == State.BLACK) {
+            return false;
+    }
     this.gameData.getBoardData().getLocationData(x, y).addPiece(value);
+    return true;
 };
