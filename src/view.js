@@ -33,6 +33,11 @@ Board = function(props) {
         React.createElement(BoardBody, props));
 };
 
+Board.propTypes = {
+    board: React.PropTypes.instanceOf(GameData.BoardData).isRequired,
+    modelCallback: React.PropTypes.func.isRequired
+}
+
 BoardBody = function(props) {
     var rows = [];
     for (var i = 0; i < props.board.getSize(); i++) {
@@ -41,6 +46,11 @@ BoardBody = function(props) {
     }
     return React.createElement.apply(this, ['tbody', props].concat(rows));
 };
+
+BoardBody.propTypes = {
+    board: React.PropTypes.instanceOf(GameData.BoardData).isRequired,
+    modelCallback: React.PropTypes.func.isRequired
+}
 
 BoardRow = function(props) {
     var cells = [];
@@ -51,6 +61,11 @@ BoardRow = function(props) {
     return React.createElement.apply(this, ['tr', props].concat(cells));
 };
 
+BoardRow.propTypes = {
+    row: React.PropTypes.arrayOf(GameData.BoardData.LocationData).isRequired,
+    modelCallback: React.PropTypes.func.isRequired
+}
+
 BoardCell = function(props) {
     return React.createElement('td',
         {onClick: function place() {props.modelCallback.apply(this, [new Action('place',
@@ -59,6 +74,11 @@ BoardCell = function(props) {
         padding: '0px', width:20, height:20}},
         View.getCellSymbol(props.cell));
 };
+
+BoardCell.propTypes = {
+    cell: React.PropTypes.instanceOf(GameData.BoardData.LocationData).isRequired,
+    modelCallback: React.PropTypes.func.isRequired
+}
 
 /**
  * The method used to select what to display for a given LocationData.
