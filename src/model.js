@@ -79,20 +79,20 @@ Model.prototype.computeTerritory = function() {
             // first add any new segments that use the new point to account for shared vertices
             if (this.getCell(x, y).hasBlackPiece) {
                 for (var i in currentBlackPoints) {
-                    if (currentBlackPoints.hasOwnProperty(i)) {
+                    if (!currentBlackPoints.hasOwnProperty(i)) {
                         continue;
                     }
                     var obj = {top: currentBlackPoints[i], bottom: y};
-                    currentBlackSegments[obj] = obj; // does this add it like a set entry like I think it does?
+                    currentBlackSegments[JSON.stringify(obj)] = obj; // does this add it like a set entry like I think it does?
                 }
             }
             if (this.getCell(x, y).hasWhitePiece) {
                 for (var i in currentWhitePoints) {
-                    if (currentWhitePoints.hasOwnProperty(i)) {
+                    if (!currentWhitePoints.hasOwnProperty(i)) {
                         continue;
                     }
                     var obj = {top: currentWhitePoints[i], bottom: y};
-                    currentWhiteSegments[obj] = obj; // does this add it like a set entry like I think it does?
+                    currentWhiteSegments[JSON.stringify(obj)] = obj; // does this add it like a set entry like I think it does?
                 }
             }
             // then remove previous points which are blocked by the new point of an opposing color
@@ -113,41 +113,41 @@ Model.prototype.computeTerritory = function() {
 
         // Searches for parallel pairs in pair map and scores accordingly.
         for(var p in currentBlackSegments) {
-            if (object.hasOwnProperty(p)) {
+            if (!currentBlackSegments.hasOwnProperty(p)) {
                 continue;
             }
             if(typeof blackSegmentColumns[p] !== 'undefined' && x - blackSegmentColumns[p].column > 1) { // quick fix until we have cap states
                 noMoreCaptures = false;
                 var obj = blackSegmentColumns[p];
                 for(var i = obj.column; i <= x; i++){
-                for(var j = obj.x; j <= obj.y; j++){
-                    this.place(i, j, State.BLACK);
-                }
+                    for(var j = obj.top; j <= obj.bottom; j++){
+                        this.place(i, j, State.BLACK);
+                    }
                 }
             }
         }
         for(var p in currentWhiteSegments) {
-            if (object.hasOwnProperty(p)) {
+            if (!currentWhiteSegments.hasOwnProperty(p)) {
                 continue;
             }
             if(typeof whiteSegmentColumns[p] !== 'undefined' && x - whiteSegmentColumns[p].column > 1) { // quick fix until we have cap states
                 noMoreCaptures = false;
                 var obj = whiteSegmentColumns[p];
                 for(var i = obj.column; i <= x; i++){
-                for(var j = obj.x; j <= obj.y; j++){
-                    this.place(i, j, State.WHITE);
-                }
+                    for(var j = obj.top; j <= obj.bottom; j++){
+                        this.place(i, j, State.WHITE);
+                    }
                 }
             }
         }
 
         // Removes any pairs blocked by things in the current row.
         for(var i in currentBlackPoints) {
-            if (currentBlackPoints.hasOwnProperty(i)) {
+            if (!currentBlackPoints.hasOwnProperty(i)) {
                 continue;
             }
             for(var p in currentWhiteSegments) {
-                if (currentWhiteSegments.hasOwnProperty(p)) {
+                if (!currentWhiteSegments.hasOwnProperty(p)) {
                     continue;
                 }
                 if(p.x == i || p.y == i) {
@@ -156,7 +156,7 @@ Model.prototype.computeTerritory = function() {
             }
         }
         for(var p in toRemove) {
-            if(toRemove.hasOwnProperty(p)) {
+            if(!toRemove.hasOwnProperty(p)) {
                 continue;
             }
             delete whiteSegmentColumns[p];
@@ -164,11 +164,11 @@ Model.prototype.computeTerritory = function() {
         toRemove = {};
 
         for(var i in currentWhitePoints) {
-            if (currentWhitePoints.hasOwnProperty(i)) {
+            if (!currentWhitePoints.hasOwnProperty(i)) {
                 continue;
             }
             for(var p in currentBlackSegments) {
-                if (currentBlackSegments.hasOwnProperty(p)) {
+                if (!currentBlackSegments.hasOwnProperty(p)) {
                     continue;
                 }
                 if(p.x == i || p.y == i) {
@@ -177,7 +177,7 @@ Model.prototype.computeTerritory = function() {
             }
         }
         for(var p in toRemove) {
-            if(toRemove.hasOwnProperty(p)) {
+            if(!toRemove.hasOwnProperty(p)) {
                 continue;
             }
             delete blackSegmentColumns[p];
@@ -186,16 +186,18 @@ Model.prototype.computeTerritory = function() {
 
         // Adds newly found segments to the columns maps.
         for(var p in currentBlackSegments) {
-            if (currentBlackSegments.hasOwnProperty(p)) {
+            if (!currentBlackSegments.hasOwnProperty(p)) {
                 continue;
             }
-            blackSegmentColumns[p] = {top: p.top, bottom: p.bottom, column: x};
+            var obj = JSON.parse(p);
+            blackSegmentColumns[p] = {top: obj.top, bottom: obj.bottom, column: x};
         }
         for(var p in currentWhiteSegments) {
-            if (currentWhiteSegments.hasOwnProperty(p)) {
+            if (!currentWhiteSegments.hasOwnProperty(p)) {
                 continue;
             }
-            whiteSegmentColumns[p] = {top: p.top, bottom: p.bottom, column: x};
+            var obj = JSON.parse(p);
+            whiteSegmentColumns[p] = {top: obj.top, bottom: obj.bottom, column: x};
         }
     }
     return noMoreCaptures;
