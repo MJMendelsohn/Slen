@@ -26,9 +26,9 @@ Model.prototype.update = function(command) {
             if (this.currentColor == State.BLACK) {
                 this.currentColor = State.WHITE;
             } else {
+                this.computeTerritory();
                 this.currentColor = State.BLACK;
             }
-            this.computeTerritory();
         }
     }
     this.viewCallback.apply(this, [this.gameData]);
