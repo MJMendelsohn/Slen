@@ -1,5 +1,5 @@
-var Color = {
+var State = {
     BLACK: 0,
     WHITE: 1
 };
-Object.freeze(Color);
+Object.freeze(State);

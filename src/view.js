@@ -1,63 +1,96 @@
-function View() {
-    ReactDOM.render(React.createElement(GameState, null),
-        document.getElementById('react-container'));
+//TODO add type protection to the stateless functional components.
+
+/**
+ * The object used to manage the game view. The View contains React components
+ * which draw the game state when View.update is called, and sends user inputs
+ * to the Model.
+ * @param data The GameData object for a given game.
+ */
+function View(data) {
+    this.data = data;
+    this.root = document.getElementById('react-container');
 }
 
-GameState = React.createClass({
-    displayName: "Game",
+/**
+ * The method used to attach the Model update callback function to the View.
+ */
+View.prototype.init = function(modelCallback) {
+    this.modelCallback = modelCallback;
+    this.update();
+};
 
-    render: function render() {
-        return React.createElement(
-            "div",
-            null,
-            React.createElement(GameState.BoardState, null)
-        )
+/**
+ * The method used to re-render the View based on the value of this.data.
+ */
+View.prototype.update = function() {
+    ReactDOM.render(React.createElement(Board,
+        {board: this.data.getBoardData(), modelCallback: this.modelCallback}),
+        this.root);
+};
+
+Board = function(props) {
+    return React.createElement('table', {style: {borderCollapse: 'collapse'}},
+        React.createElement(BoardBody, props));
+};
+
+Board.propTypes = {
+    board: React.PropTypes.instanceOf(GameData.BoardData).isRequired,
+    modelCallback: React.PropTypes.func.isRequired
+}
+
+BoardBody = function(props) {
+    var rows = [];
+    for (var i = 0; i < props.board.getSize(); i++) {
+        var childProps = {row: props.board.getRow(i), y: i, modelCallback: props.modelCallback};
+        rows[i] = React.createElement(BoardRow, childProps);
     }
-});
+    return React.createElement.apply(this, ['tbody', props].concat(rows));
+};
 
-GameState.BoardState = React.createClass({
-    displayName: "Board",
+BoardBody.propTypes = {
+    board: React.PropTypes.instanceOf(GameData.BoardData).isRequired,
+    modelCallback: React.PropTypes.func.isRequired
+}
 
-    getInitialState: function getInitialState() {
-        return {size: GameParameters.size}
-    },
-
-    render: function render() {
-        var rows = [];
-        for (var i = 0; i < this.state.size; i++) {
-            var cells = [];
-            for (var j = 0; j < this.state.size; j++) {
-                cells[j] = React.createElement(GameState.BoardState.BoardCell,
-                {key: j});
-            }
-            rows[i] = React.createElement.apply(this,
-                ['tr', null].concat(cells), {key: i});
-        }
-        return React.createElement('table',
-            {style: {borderCollapse: 'collapse'}}, React.createElement.apply(
-            this, ['tbody', null].concat(rows)));
+BoardRow = function(props) {
+    var cells = [];
+    for (var i = 0; i < props.row.length; i++) {
+        var childProps = {cell: props.row[i], y: props.y, x: i, modelCallback: props.modelCallback};
+        cells[i] = React.createElement(BoardCell, childProps);
     }
-});
+    return React.createElement.apply(this, ['tr', props].concat(cells));
+};
 
-GameState.BoardState.BoardCell = React.createClass({
-    displayName: "BoardCell",
+BoardRow.propTypes = {
+    row: React.PropTypes.arrayOf(GameData.BoardData.LocationData).isRequired,
+    modelCallback: React.PropTypes.func.isRequired
+}
 
-    getInitialState: function getInitialState() {
-        return {value: 'B'}
-    },
-    
-    handleClick() {
-        if (this.state.value == 'B') {
-            this.setState({value: 'W'});
-        } else {
-            this.setState({value: 'B'});
-        }
-    },
+BoardCell = function(props) {
+    return React.createElement('td',
+        {onClick: function place() {props.modelCallback.apply(this, [new Action('place',
+        {x: props.x, y: props.y})])},
+        style: {border: '1px solid #000000', textAlign:'center',
+        padding: '0px', width:20, height:20}},
+        View.getCellSymbol(props.cell));
+};
 
-    render: function render() {
-        return React.createElement(
-            'td',
-            {onClick: this.handleClick, style: {border: '1px solid #000000', textAlign:'center', padding: '0px', width:20, height:20}},
-            this.state.value)
+BoardCell.propTypes = {
+    cell: React.PropTypes.instanceOf(GameData.BoardData.LocationData).isRequired,
+    modelCallback: React.PropTypes.func.isRequired
+}
+
+/**
+ * The method used to select what to display for a given LocationData.
+ */
+View.getCellSymbol = function(cell) {
+    if (!cell.hasBlackPiece && !cell.hasWhitePiece) {
+        return ' ';
+    } else if (cell.hasBlackPiece && !cell.hasWhitePiece) {
+        return 'B';
+    } else if (!cell.hasBlackPiece && cell.hasWhitePiece) {
+        return 'W';
+    } else {
+        return 'X';
     }
-});
+};
