@@ -84,13 +84,18 @@ BoardCell.propTypes = {
  * The method used to select what to display for a given LocationData.
  */
 View.getCellSymbol = function(cell) {
-    if (!cell.hasBlackPiece && !cell.hasWhitePiece) {
+    if (!cell.hasBlackPiece && !cell.hasWhitePiece &&
+        !cell.hasBlackMark && !cell.hasWhiteMark) {
         return ' ';
     } else if (cell.hasBlackPiece && !cell.hasWhitePiece) {
         return 'B';
     } else if (!cell.hasBlackPiece && cell.hasWhitePiece) {
         return 'W';
+    } else if (cell.hasBlackMark && !cell.hasWhiteMark) {
+        return 'b';
+    } else if (!cell.hasBlackMark && cell.hasWhiteMark) {
+        return 'w';
     } else {
-        return 'X';
+        return 'x';
     }
 };
