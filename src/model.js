@@ -146,12 +146,15 @@ Model.prototype.computeTerritory = function() {
             if (!currentBlackPoints.hasOwnProperty(i)) {
                 continue;
             }
-            for(var p in currentWhiteSegments) {
-                if (!currentWhiteSegments.hasOwnProperty(p)) {
+            for(var p in whiteSegmentColumns) {
+                if (!whiteSegmentColumns.hasOwnProperty(p)) {
                     continue;
                 }
-                if(p.x == i || p.y == i) {
-                    toRemove[p] = p;
+                // var obj = JSON.parse(p);
+                var obj = whiteSegmentColumns[p];
+                console.log(obj);
+                if(obj.top == i || obj.bottom == i) {
+                    toRemove[p] = obj;
                 }
             }
         }
@@ -167,12 +170,18 @@ Model.prototype.computeTerritory = function() {
             if (!currentWhitePoints.hasOwnProperty(i)) {
                 continue;
             }
-            for(var p in currentBlackSegments) {
-                if (!currentBlackSegments.hasOwnProperty(p)) {
+            // console.log('HEREEEEE');
+            // console.log(currentWhiteSegments);
+            for(var p in blackSegmentColumns) {
+                // console.log('yee');
+                if (!blackSegmentColumns.hasOwnProperty(p)) {
                     continue;
                 }
-                if(p.x == i || p.y == i) {
-                    toRemove[p] = p;
+                // var obj = JSON.parse(p);
+                var obj = blackSegmentColumns[p];
+                // console.log('2' + obj);
+                if(obj.top == i || obj.bottom == i) {
+                    toRemove[p] = obj;
                 }
             }
         }
@@ -182,6 +191,7 @@ Model.prototype.computeTerritory = function() {
             }
             delete blackSegmentColumns[p];
         }
+        // console.log(toRemove);
         toRemove = {};
 
         // Adds newly found segments to the columns maps.
