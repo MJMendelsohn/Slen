@@ -95,7 +95,9 @@ View.getCellSymbol = function(cell) {
         return 'b';
     } else if (!cell.hasBlackMark && cell.hasWhiteMark) {
         return 'w';
-    } else {
+    } else if (cell.hasBlackMark && cell.hasWhiteMark){
         return 'x';
+    } else {
+        return 'X';
     }
 };
