@@ -43,6 +43,12 @@ Model.prototype.place = function(x, y, value) {
     return true;
 };
 
+Model.prototype.addMark = function(x, y, value) {
+    // TODO: check for already having a mark here or in scoring method?
+    this.gameData.getBoardData().getLocationData(x, y).addTerritoryMark(value);
+    return true;
+};
+
 Model.prototype.getCell = function(x, y) {
     return this.gameData.getBoardData().getLocationData(x, y);
 };
@@ -116,12 +122,12 @@ Model.prototype.computeTerritory = function() {
             if (!currentBlackSegments.hasOwnProperty(p)) {
                 continue;
             }
-            if(typeof blackSegmentColumns[p] !== 'undefined' && x - blackSegmentColumns[p].column > 1) { // quick fix until we have cap states
+            if(typeof blackSegmentColumns[p] !== 'undefined') {
                 noMoreCaptures = false;
                 var obj = blackSegmentColumns[p];
                 for(var i = obj.column; i <= x; i++){
                     for(var j = obj.top; j <= obj.bottom; j++){
-                        this.place(i, j, State.BLACK);
+                        this.addMark(i, j, State.BLACK);
                     }
                 }
             }
@@ -130,12 +136,12 @@ Model.prototype.computeTerritory = function() {
             if (!currentWhiteSegments.hasOwnProperty(p)) {
                 continue;
             }
-            if(typeof whiteSegmentColumns[p] !== 'undefined' && x - whiteSegmentColumns[p].column > 1) { // quick fix until we have cap states
+            if(typeof whiteSegmentColumns[p] !== 'undefined') {
                 noMoreCaptures = false;
                 var obj = whiteSegmentColumns[p];
                 for(var i = obj.column; i <= x; i++){
                     for(var j = obj.top; j <= obj.bottom; j++){
-                        this.place(i, j, State.WHITE);
+                        this.addMark(i, j, State.WHITE);
                     }
                 }
             }
