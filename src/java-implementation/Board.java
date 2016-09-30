@@ -2,11 +2,16 @@ import java.util.*;
 
 public final class Board {
   private State[][] board;
+  private State[][] terrBoard;
   
   public Board(int width, int height) {
     // num columns = width, num rows = height
     this.board = new State[width][height];
     for(State[] column : board) {
+      Arrays.fill(column, State.NEITHER);
+    }
+    this.terrBoard = new State[width][height];
+    for(State[] column : terrBoard) {
       Arrays.fill(column, State.NEITHER);
     }
   }
@@ -92,30 +97,36 @@ public final class Board {
       }
 
       // Searches for parallel pairs in pair map and scores accordingly.
+      Set<Pair> blackCapturedTerr = new HashSet();
       for(Pair p : currentBlackSegments) {
         if(blackSegmentColumns.containsKey(p) && x - blackSegmentColumns.get(p) > 1) { // quick fix until we have cap states
           noMoreCaptures = false;
           for(int i = blackSegmentColumns.get(p); i <= x; i++){
             for(int j = p.getX(); j <= p.getY(); j++){
-              if(isValidCell(new Pair(i, j), State.BLACK)){
-                setCell(new Pair(i, j), State.BLACK);
+              Pair captured = new Pair(i, j);
+              if(isCapturableTerritory(captured)) {
+                blackCapturedTerr.add(captured);
               }
             }
           }
         }
       }
+      Set<Pair> whiteCapturedTerr = new HashSet();
       for(Pair p : currentWhiteSegments) {
         if(whiteSegmentColumns.containsKey(p) && x - whiteSegmentColumns.get(p) > 1) { // quick fix until we have cap states
           noMoreCaptures = false;
           for(int i = whiteSegmentColumns.get(p); i <= x; i++){
             for(int j = p.getX(); j <= p.getY(); j++){
-              if(isValidCell(new Pair(i, j), State.WHITE)){
-                setCell(new Pair(i, j), State.WHITE);
+              Pair captured = new Pair(i, j);
+              if(isCapturableTerritory(captured)) {
+                whiteCapturedTerr.add(captured);
               }
             }
           }
         }
       }
+
+      updateTerritory(blackCapturedTerr, whiteCapturedTerr);
 
       // Removes any pairs blocked by things in the current row.
       for(int i : currentBlackPoints) {
@@ -188,7 +199,7 @@ public final class Board {
   public char getDisplayValue(int x, int y) {
     switch(board[x][y]) {
       case NEITHER:
-        return '.';
+        return getTerrDisplayValue(x, y);
       case BLACK:
         return 'B';
       case WHITE:
@@ -199,11 +210,53 @@ public final class Board {
     return '?';
   }
 
+  private char getTerrDisplayValue(int x, int y) {
+    System.out.println("X: " + x + ", Y: " + y);
+    switch(terrBoard[x][y]) {
+      case NEITHER:
+        return '.';
+      case BLACK:
+        return '-';
+      case WHITE:
+        return '|';
+      case BOTH:
+        return '+';
+    }
+    return '?';
+  }
+
   public boolean isValidRow(int row) {
-    return row >= 0 && row < board.length;
+    return row >= 0 && row < board[0].length;
   }
 
   public boolean isValidCol(int col) {
-    return col >= 0 && col < board[0].length;
+    return col >= 0 && col < board.length;
+  }
+
+  private boolean isCapturableTerritory(Pair loc) {
+    if (!isValidRow(loc.getY()) || !isValidCol(loc.getX())) {
+      throw new RuntimeException("Location is not on territory board");
+    }
+    return terrBoard[loc.getY()][loc.getX()] == State.NEITHER;
+  }
+
+  private void updateTerritory(Set<Pair> blackCapturedTerr, Set<Pair> whiteCapturedTerr) {
+    for (Pair p: blackCapturedTerr) {
+      setTerrCell(p, State.BLACK);
+    }
+    for (Pair p: whiteCapturedTerr) {
+      if (terrBoard[p.getX()][p.getY()] == State.BLACK) {
+        setTerrCell(p, State.BOTH);
+      } else {
+        setTerrCell(p, State.WHITE);
+      }
+    }
+  }
+
+  private void setTerrCell(Pair pair, State val) {
+    if (!isValidRow(pair.getY()) || !isValidCol(pair.getX())) {
+      throw new RuntimeException("Location is not on territory board");
+    }
+    terrBoard[pair.getX()][pair.getY()] = val;
   }
 }
