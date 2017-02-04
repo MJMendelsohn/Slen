@@ -1,3 +1,4 @@
+var React = require('react')
 
 function GameView() {
     this.GameData = new GameData(new GameParameters(11));

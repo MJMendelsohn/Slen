@@ -1,6 +1,6 @@
 //ADD THIS
-//var React = require('react')
-//var ReactDOM = require('react-dom')
+var React = require('react')
+var ReactDOM = require('react-dom')
 //TODO add type protection to the stateless functional components.
 
 /**

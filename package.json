@@ -10,7 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/MJMendelsohn/Slen.git"
   },
-  "author": "",
+  "author": "Jacob Lettie, Michael Mendelsohn, Matthew Faw",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/MJMendelsohn/Slen/issues"
@@ -19,5 +19,14 @@
   "dependencies": {
     "react": "^15.4.2",
     "react-dom": "^15.4.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.22.2",
+    "babel-preset-es2015": "^6.22.0",
+    "babel-preset-react": "^6.22.0",
+    "babel-preset-stage-2": "^6.22.0",
+    "babelify": "^7.3.0",
+    "nodemon": "^1.11.0",
+    "watchify": "^3.9.0"
   }
 }
