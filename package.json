@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/MJMendelsohn/Slen/issues"
   },
-  "homepage": "https://github.com/MJMendelsohn/Slen#readme"
+  "homepage": "https://github.com/MJMendelsohn/Slen#readme",
+  "dependencies": {
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2"
+  }
 }
