@@ -1,5 +1,3 @@
-import { GameParameters } from './game_parameters';
-import { State } from './enums';
 /**
  * The object used to store all of the data in the game. This object has no 
  * functions besides functions used to abstract away data structures, and all
@@ -7,7 +5,7 @@ import { State } from './enums';
  * abstract away data structures.
  * @param gameParameters The GameParameters object used to construct the game.
  */
-export function GameData(gameParameters) {
+function GameData(gameParameters) {
     this.board = new GameData.BoardData()
     this.metaData = new GameData.MetaData();
 }

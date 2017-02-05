@@ -3,7 +3,7 @@
  * @param id The id of a given action.
  * @param contents The contents of a given action.
  */
-export function Action(id, contents) {
+function Action(id, contents) {
     this.id = id;
     this.contents = contents;
 }
