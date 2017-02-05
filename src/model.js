@@ -1,10 +1,11 @@
+import { State } from './enums';
 /**
  * The object used to manage the game logic. The Model and its subobjects are
  * allowed to view and modify the GameData object. The model updates the game
  * when Model.update is called.
  * @param data The GameData object for a given game.
  */
-function Model(data) {
+export function Model(data) {
     this.gameData = data;
     this.currentColor = State.BLACK;
 }
@@ -60,21 +61,21 @@ Model.prototype.computeTerritory = function() {
      * Maps for each color from a given interval to the column it appears in. Will only ever need one entry since if a
      * second pair is found, scoring would occur which will reset the map entry with the new segment.
      */
-    blackSegmentColumns = {};
-    whiteSegmentColumns = {};
+    let blackSegmentColumns = {};
+    let whiteSegmentColumns = {};
     /**
      * Sets for each color containing the vertical segments of the currently examined column, where the pairs represent
      * interval endpoints.
      */
-    currentBlackSegments = {};
-    currentWhiteSegments = {};
+    let currentBlackSegments = {};
+    let currentWhiteSegments = {};
     /**
      * Sets for each color containing the points found so far in the currently examined column
      */
-    currentBlackPoints = {};
-    currentWhitePoints = {};
+    let currentBlackPoints = {};
+    let currentWhitePoints = {};
 
-    toRemove = {}; // placeholder set to prevent a ConcurrentModificationException
+    let toRemove = {}; // placeholder set to prevent a ConcurrentModificationException
     for(var x = 0; x < this.gameData.getBoardData().getSize(); x++) {
         // Populates the current segments sets.
         currentBlackSegments = {};

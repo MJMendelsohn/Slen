@@ -4,7 +4,9 @@
   "description": "A simultaneous move game, where players try to form rectangles and block the creation of each others.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "watchify src/main.js -v -t [ babelify --presets [ react ] ] -o public/js/main.js",
+    "serve": "nodemon server/index.js --exec babel-node"
   },
   "repository": {
     "type": "git",
