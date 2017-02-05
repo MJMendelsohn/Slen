@@ -6,7 +6,7 @@ export const route = (app) => {
             console.log('derp')
             res.sendFile(path.resolve(__dirname, '..', 'build', 'index.html'));
         } else {
-            res.sendFile(path.resolve(__dirname, '..', 'public', 'index.html'));
+            res.sendFile(path.resolve(__dirname, '..', 'public-dev', 'index.html'));
         }
     })
 }
