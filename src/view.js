@@ -1,3 +1,7 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { GameData } from './game_data';
+import { Action } from './action';
 //TODO add type protection to the stateless functional components.
 
 /**
@@ -6,7 +10,7 @@
  * to the Model.
  * @param data The GameData object for a given game.
  */
-function View(data) {
+export function View(data) {
     this.data = data;
     this.root = document.getElementById('react-container');
 }
@@ -28,7 +32,7 @@ View.prototype.update = function() {
         this.root);
 };
 
-Board = function(props) {
+let Board = function(props) {
     return React.createElement('table', {style: {borderCollapse: 'collapse'}},
         React.createElement(BoardBody, props));
 };
@@ -38,7 +42,7 @@ Board.propTypes = {
     modelCallback: React.PropTypes.func.isRequired
 }
 
-BoardBody = function(props) {
+let BoardBody = function(props) {
     var rows = [];
     for (var i = 0; i < props.board.getSize(); i++) {
         var childProps = {row: props.board.getRow(i), y: i, modelCallback: props.modelCallback};
@@ -52,7 +56,7 @@ BoardBody.propTypes = {
     modelCallback: React.PropTypes.func.isRequired
 }
 
-BoardRow = function(props) {
+let BoardRow = function(props) {
     var cells = [];
     for (var i = 0; i < props.row.length; i++) {
         var childProps = {cell: props.row[i], y: props.y, x: i, modelCallback: props.modelCallback};
@@ -66,7 +70,7 @@ BoardRow.propTypes = {
     modelCallback: React.PropTypes.func.isRequired
 }
 
-BoardCell = function(props) {
+let BoardCell = function(props) {
     return React.createElement('td',
         {onClick: function place() {props.modelCallback.apply(this, [new Action('place',
         {x: props.x, y: props.y})])},

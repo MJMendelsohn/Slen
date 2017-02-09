@@ -1,3 +1,6 @@
+import React from 'react';
+import GameParameters from './game_parameters';
+import GameData from './game_data';
 
 function GameView() {
     this.GameData = new GameData(new GameParameters(11));
